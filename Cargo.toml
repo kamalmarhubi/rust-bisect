@@ -4,3 +4,4 @@ name = "rustc-bisect"
 version = "0.1.0"
 
 [dependencies]
+multirust-rs = "0.0.4"
