@@ -1,0 +1,6 @@
+[package]
+authors = ["Kamal Marhubi <kamal@marhubi.com>"]
+name = "rustc-bisect"
+version = "0.1.0"
+
+[dependencies]

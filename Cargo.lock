@@ -1,0 +1,4 @@
+[root]
+name = "rustc-bisect"
+version = "0.1.0"
+
