@@ -1,7 +1,8 @@
-extern crate clap;
-extern crate multirust;
 #[macro_use(shared_ntfy)]
 extern crate rust_install;
+
+extern crate clap;
+extern crate multirust;
 
 use std::ffi::OsStr;
 use std::error::Error;
@@ -93,5 +94,4 @@ fn run_rust_bisect() -> Result<()> {
 
 fn main() {
     run_rust_bisect().expect("something went wrong");
-
 }
