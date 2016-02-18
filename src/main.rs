@@ -49,7 +49,7 @@ impl<'a> Cmd<'a> {
     }
 
     fn succeeds_with<'b>(&self, toolchain: &Toolchain<'b>) -> Result<bool> {
-        let mut cmd = try!(toolchain.create_command(self.program));
+        let mut cmd = try!(toolchain.create_command(&self.program));
         cmd.args(self.args);
         let status = try!(cmd.status());
         Ok(status.success())
