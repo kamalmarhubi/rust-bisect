@@ -1,16 +1,18 @@
 #[macro_use(shared_ntfy)]
 extern crate rust_install;
 
+extern crate chrono;
 extern crate clap;
 extern crate multirust;
 
 extern crate rustc_bisect;
 
+use chrono::{Datelike, NaiveDate};
 use clap::{App, AppSettings, Arg};
 
 use multirust::{Cfg, Notification};
 
-use rustc_bisect::{Cmd, Result, ToolchainSpec};
+use rustc_bisect::{Cmd, Error, Result, ToolchainSpec, bisect};
 
 // Copied from multirust-rs.
 fn set_globals() -> multirust::Result<Cfg> {
@@ -35,19 +37,16 @@ fn run_rust_bisect() -> Result<()> {
     let matches = App::new("rustc-bisect")
                       .author("Kamal Marhubi <kamal@marhubi.com>")
                       .setting(AppSettings::TrailingVarArg)
-                      .arg(Arg::with_name("toolchain")
-                               .long("tmp-toolchain")
-                               .takes_value(true)
-                               .value_name("TOOLCHAIN")
-                               .required(true))
                       .arg(Arg::with_name("good")
                                .long("good")
                                .takes_value(true)
-                               .value_name("TOOLCHAIN"))
+                               .value_name("TOOLCHAIN")
+                               .required(true))
                       .arg(Arg::with_name("bad")
                                .long("bad")
                                .takes_value(true)
-                               .value_name("TOOLCHAIN"))
+                               .value_name("TOOLCHAIN")
+                               .required(true))
                       .arg(Arg::with_name("COMMAND")
                                .multiple(true)
                                .required(true))
@@ -55,14 +54,41 @@ fn run_rust_bisect() -> Result<()> {
 
     let cfg = try!(set_globals());
 
+    use std::str::FromStr;
+
+    let good = matches.value_of("good").expect("good");
+    let good_spec = try!(ToolchainSpec::from_str(good));
+
+    let bad = matches.value_of("bad").expect("bad");
+    let bad_spec = try!(ToolchainSpec::from_str(bad));
+
+    fn get_nightly_date(spec: ToolchainSpec) -> Result<NaiveDate> {
+        match spec {
+            ToolchainSpec::Nightly(date) => Ok(date),
+            _ => Err(Error::from("only nightlies for now")),
+        }
+    }
+
+    let good_date = try!(get_nightly_date(good_spec));
+    let bad_date = try!(get_nightly_date(bad_spec));
+
     let cmd: Vec<_> = matches.values_of_os("COMMAND").expect("COMMAND").collect();
     let cmd = Cmd::from(&cmd[..]);
 
-    let toolchain = try!(cfg.get_toolchain(matches.value_of("toolchain").expect("toolchain"),
-                                           false));
-    try!(toolchain.install_from_dist_if_not_installed());
+    let range = good_date.num_days_from_ce()..bad_date.num_days_from_ce();
 
-    println!("{}", try!(cmd.succeeds_with(&toolchain)));
+    let out = bisect(range, |num_days| {
+        let spec = ToolchainSpec::Nightly(NaiveDate::from_num_days_from_ce(num_days));
+        let toolchain = cfg.get_toolchain(&spec.to_string(), false).expect("get_toolchain");
+        toolchain.install_from_dist_if_not_installed().expect("install");
+
+        let res = cmd.succeeds_with(&toolchain).expect("run command");
+
+        println!("command {}", if res { "succeeded" } else { "failed" });
+        !res
+    }).expect("bisect");
+
+    println!("{:?} {:?}", out, NaiveDate::from_num_days_from_ce(out));
 
     Ok(())
 }
