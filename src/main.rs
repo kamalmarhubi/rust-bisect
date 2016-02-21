@@ -6,13 +6,11 @@ extern crate multirust;
 
 extern crate rustc_bisect;
 
-use std::ffi::OsStr;
-
 use clap::{App, AppSettings, Arg};
 
-use multirust::{Cfg, Notification, Toolchain};
+use multirust::{Cfg, Notification};
 
-use rustc_bisect::{Error, Result, ToolchainSpec};
+use rustc_bisect::{Cmd, Error, Result, ToolchainSpec};
 
 // Copied from multirust-rs.
 fn set_globals() -> multirust::Result<Cfg> {
@@ -31,30 +29,6 @@ fn set_globals() -> multirust::Result<Cfg> {
             }
         }
     }))
-}
-
-struct Cmd<'a> {
-    program: &'a OsStr,
-    args: &'a [&'a OsStr],
-}
-
-impl<'a> Cmd<'a> {
-    fn from(command: &'a [&'a OsStr]) -> Cmd<'a> {
-        let program = command[0];
-        let args = &command[1..];
-
-        Cmd {
-            program: program,
-            args: args,
-        }
-    }
-
-    fn succeeds_with<'b>(&self, toolchain: &Toolchain<'b>) -> Result<bool> {
-        let mut cmd = try!(toolchain.create_command(&self.program));
-        cmd.args(self.args);
-        let status = try!(cmd.status());
-        Ok(status.success())
-    }
 }
 
 fn run_rust_bisect() -> Result<()> {

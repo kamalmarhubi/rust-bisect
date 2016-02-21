@@ -1,11 +1,14 @@
 extern crate chrono;
+extern crate multirust;
 extern crate semver;
 
 use std::{error, str};
+use std::ffi::OsStr;
 use std::fmt::{self, Display};
 use std::ops::Range;
 
 use chrono::NaiveDate;
+use multirust::Toolchain;
 use semver::Version;
 
 pub type Error = Box<error::Error>;
@@ -115,5 +118,29 @@ impl Display for ToolchainSpec {
             Stable(ref v) => Display::fmt(v, f),
             Nightly(date) => write!(f, "nightly-{}", date),
         }
+    }
+}
+
+pub struct Cmd<'a> {
+    program: &'a OsStr,
+    args: &'a [&'a OsStr],
+}
+
+impl<'a> Cmd<'a> {
+    pub fn from(command: &'a [&'a OsStr]) -> Cmd<'a> {
+        let program = command[0];
+        let args = &command[1..];
+
+        Cmd {
+            program: program,
+            args: args,
+        }
+    }
+
+    pub fn succeeds_with<'b>(&self, toolchain: &Toolchain<'b>) -> Result<bool> {
+        let mut cmd = try!(toolchain.create_command(&self.program));
+        cmd.args(self.args);
+        let status = try!(cmd.status());
+        Ok(status.success())
     }
 }
