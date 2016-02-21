@@ -10,7 +10,7 @@ use clap::{App, AppSettings, Arg};
 
 use multirust::{Cfg, Notification};
 
-use rustc_bisect::{Cmd, Error, Result, ToolchainSpec};
+use rustc_bisect::{Cmd, Result, ToolchainSpec};
 
 // Copied from multirust-rs.
 fn set_globals() -> multirust::Result<Cfg> {
