@@ -79,6 +79,7 @@ mod tests {
     }
 }
 
+#[derive(Clone, Debug)]
 pub enum ToolchainSpec {
     Stable(Version),
     Nightly(NaiveDate),
