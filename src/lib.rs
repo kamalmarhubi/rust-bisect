@@ -1,4 +1,15 @@
+extern crate chrono;
+extern crate semver;
+
+use std::{error, str};
+use std::fmt::{self, Display};
 use std::ops::Range;
+
+use chrono::NaiveDate;
+use semver::Version;
+
+pub type Error = Box<error::Error>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 pub trait RangeExt {
     fn is_empty(&self) -> bool;
@@ -62,5 +73,47 @@ mod tests {
         assert_eq!(None, bisect(0..0, |x| x >= 0));
         assert_eq!(Some(50), bisect(0..100, |x| x >= 50));
         assert_eq!(None, bisect(0..100, |x| x >= 1000));
+    }
+}
+
+pub enum ToolchainSpec {
+    Stable(Version),
+    Nightly(NaiveDate),
+}
+use ToolchainSpec::*;
+
+impl str::FromStr for ToolchainSpec {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<ToolchainSpec> {
+        const NIGHTLY: &'static str = "nightly-";
+        if s.starts_with(NIGHTLY) {
+            return Ok(Nightly(try!(s[NIGHTLY.len()..].parse())));
+        } else {
+
+        }
+        unimplemented!();
+    }
+
+}
+
+impl From<NaiveDate> for ToolchainSpec {
+    fn from(date: NaiveDate) -> ToolchainSpec {
+        Nightly(date)
+    }
+}
+
+impl From<Version> for ToolchainSpec {
+    fn from(v: Version) -> ToolchainSpec {
+        Stable(v)
+    }
+}
+
+impl Display for ToolchainSpec {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Stable(ref v) => Display::fmt(v, f),
+            Nightly(date) => write!(f, "nightly-{}", date),
+        }
     }
 }

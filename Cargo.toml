@@ -4,6 +4,8 @@ name = "rustc-bisect"
 version = "0.1.0"
 
 [dependencies]
+chrono = "0.2"
 clap = "2"
 multirust-rs = { git = "https://github.com/Diggsey/multirust-rs.git" }
 rust-install = { git = "https://github.com/Diggsey/multirust-rs.git", path = "rust-install" }
+semver = "0.2"

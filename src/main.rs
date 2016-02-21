@@ -4,14 +4,15 @@ extern crate rust_install;
 extern crate clap;
 extern crate multirust;
 
+extern crate rustc_bisect;
+
 use std::ffi::OsStr;
-use std::error::Error;
 
 use clap::{App, AppSettings, Arg};
 
 use multirust::{Cfg, Notification, Toolchain};
 
-type Result<T> = std::result::Result<T, Box<Error>>;
+use rustc_bisect::{Error, Result, ToolchainSpec};
 
 // Copied from multirust-rs.
 fn set_globals() -> multirust::Result<Cfg> {
