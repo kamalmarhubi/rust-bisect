@@ -80,12 +80,15 @@ fn run_rust_bisect() -> Result<()> {
     let out = bisect(range, |num_days| {
         let spec = ToolchainSpec::Nightly(NaiveDate::from_num_days_from_ce(num_days));
         let toolchain = cfg.get_toolchain(&spec.to_string(), false).expect("get_toolchain");
-        toolchain.install_from_dist_if_not_installed().expect("install");
+
+        if toolchain.install_from_dist_if_not_installed().is_err() {
+            return None;
+        }
 
         let res = cmd.succeeds_with(&toolchain).expect("run command");
 
-        println!("command {}", if res { "succeeded" } else { "failed" });
-        !res
+        println!("command {} at {}", if res { "succeeded" } else { "failed" }, spec);
+        Some(!res)
     }).expect("bisect");
 
     println!("{:?} {:?}", out, NaiveDate::from_num_days_from_ce(out));

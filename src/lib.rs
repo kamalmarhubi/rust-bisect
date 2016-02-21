@@ -32,7 +32,7 @@ impl RangeExt for Range<i32> {
 
 /// Finds least item in `r` for which the `predicate` holds.
 pub fn bisect<P>(mut r: Range<i32>, mut predicate: P) -> Option<i32>
-    where P: FnMut(i32) -> bool
+    where P: FnMut(i32) -> Option<bool>
 {
     if r.is_empty() {
         return None;
@@ -41,28 +41,43 @@ pub fn bisect<P>(mut r: Range<i32>, mut predicate: P) -> Option<i32>
     loop {
         if r.is_empty() {
             return match predicate(r.end) {
-                true => Some(r.end),
-                false => None,
+                Some(true) => Some(r.end),
+                _ => None,
             };
         }
         if r.is_singleton() {
-            return if predicate(r.start) {
+            return if let Some(true) = predicate(r.start) {
                 Some(r.start)
+            } else if let Some(true) = predicate(r.end) {
+                // TODO test we don't go out of range because of this clause
+                Some(r.end)
             } else {
                 None
             };
         }
-        let mid = r.start + (r.end - r.start) / 2;
-        if predicate(mid) {
-            r = Range {
+        let mut mid = r.start + (r.end - r.start) / 2;
+
+        let mut mid_res;
+        loop {
+            mid_res = predicate(mid);
+            if mid_res.is_some() {
+                break;
+            }
+            // TODO: ensure we're in range, possibly searching up and down to remain as close as
+            // possible to intended value
+            mid = mid + 1;
+        }
+
+        r = if mid_res.expect("should be ok at this point") {
+            Range {
                 start: r.start,
                 end: mid,
-            };
+            }
         } else {
-            r = Range {
+            Range {
                 start: mid + 1,
                 end: r.end,
-            };
+            }
         }
     }
 }
@@ -73,9 +88,9 @@ mod tests {
 
     #[test]
     fn test_bisect() {
-        assert_eq!(None, bisect(0..0, |x| x >= 0));
-        assert_eq!(Some(50), bisect(0..100, |x| x >= 50));
-        assert_eq!(None, bisect(0..100, |x| x >= 1000));
+        assert_eq!(None, bisect(0..0, |x| Some(x >= 0)));
+        assert_eq!(Some(50), bisect(0..100, |x| Some(x >= 50)));
+        assert_eq!(None, bisect(0..100, |x| Some(x >= 1000)));
     }
 }
 
