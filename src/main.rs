@@ -61,6 +61,8 @@ fn run_rust_bisect() -> Result<i32> {
         let toolchain = cfg.get_toolchain(&spec.to_string(), false).expect("get_toolchain");
 
         if toolchain.install_from_dist_if_not_installed().is_err() {
+            // Assuming this is because the nightly wasn't found.
+            // TODO: check the error, and have better reporting.
             return None;
         }
 
