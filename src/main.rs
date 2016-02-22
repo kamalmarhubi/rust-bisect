@@ -29,7 +29,7 @@ fn run_rust_bisect() -> Result<()> {
                                .required(true))
                       .get_matches();
 
-    
+
     let cfg = try!(multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none()));
 
     use std::str::FromStr;

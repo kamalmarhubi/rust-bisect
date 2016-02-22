@@ -113,7 +113,6 @@ impl str::FromStr for ToolchainSpec {
         }
         unimplemented!();
     }
-
 }
 
 impl From<NaiveDate> for ToolchainSpec {
