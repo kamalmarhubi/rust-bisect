@@ -12,7 +12,7 @@ use chrono::{Datelike, NaiveDate};
 use clap::{App, AppSettings, Arg};
 use rust_install::dist::ToolchainDesc;
 
-use rustc_bisect::{Cmd, Result, bisect};
+use rustc_bisect::{Result, bisect};
 
 const NIGHTLY: &'static str = "nightly";
 
@@ -70,13 +70,11 @@ fn run_rust_bisect() -> Result<i32> {
                                       .expect("clap validator misbheaved for `bad`")
                                       .parse());
 
-    let mut cmd_vec = Vec::new();
-    cmd_vec.push(matches.value_of_os("COMMAND")
-                        .expect("clap didn't respect required arg `COMMAND`"));
-    if let Some(args) = matches.values_of_os("ARGS") {
-        cmd_vec.extend(args);
-    }
-    let cmd = Cmd::from(&cmd_vec[..]);
+    let cmd = matches.value_of_os("COMMAND")
+                     .expect("clap didn't respect required arg `COMMAND`");
+    let args: Vec<_> = matches.values_of_os("ARGS")
+                              .map(|args| args.collect())
+                              .unwrap_or(Vec::new());
 
     let range = good_date.num_days_from_ce()..bad_date.num_days_from_ce();
 
@@ -95,7 +93,9 @@ fn run_rust_bisect() -> Result<i32> {
             return None;
         }
 
-        let res = cmd.succeeds_with(&toolchain).expect("could not run command");
+        let mut cmd = toolchain.create_command(cmd).expect("could not create command");
+        cmd.args(&args);
+        let res = cmd.status().expect("could not run command").success();
 
         println!("command {} at {}",
                  if res {

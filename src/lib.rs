@@ -1,7 +1,6 @@
 extern crate multirust;
 
 use std::error;
-use std::ffi::OsStr;
 use std::ops::Range;
 
 pub type Error = Box<error::Error>;
@@ -84,29 +83,5 @@ mod tests {
         assert_eq!(None, bisect(0..0, |x| Some(x >= 0)));
         assert_eq!(Some(50), bisect(0..100, |x| Some(x >= 50)));
         assert_eq!(None, bisect(0..100, |x| Some(x >= 1000)));
-    }
-}
-
-pub struct Cmd<'a> {
-    program: &'a OsStr,
-    args: &'a [&'a OsStr],
-}
-
-impl<'a> Cmd<'a> {
-    pub fn from(command: &'a [&'a OsStr]) -> Cmd<'a> {
-        let program = command[0];
-        let args = &command[1..];
-
-        Cmd {
-            program: program,
-            args: args,
-        }
-    }
-
-    pub fn succeeds_with<'b>(&self, toolchain: &multirust::Toolchain<'b>) -> Result<bool> {
-        let mut cmd = try!(toolchain.create_command(&self.program));
-        cmd.args(self.args);
-        let status = try!(cmd.status());
-        Ok(status.success())
     }
 }
