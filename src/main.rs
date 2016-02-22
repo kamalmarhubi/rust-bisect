@@ -35,13 +35,11 @@ fn run_rust_bisect() -> Result<i32> {
 
     let cfg = try!(multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none()));
 
-    use std::str::FromStr;
+    let good = matches.value_of("good").expect("clap didn't respect required arg `good`");
+    let good_spec: ToolchainSpec = try!(good.parse());
 
-    let good = matches.value_of("good").expect("good");
-    let good_spec = try!(ToolchainSpec::from_str(good));
-
-    let bad = matches.value_of("bad").expect("bad");
-    let bad_spec = try!(ToolchainSpec::from_str(bad));
+    let bad = matches.value_of("bad").expect("clap didn't respect required arg `bad`");
+    let bad_spec: ToolchainSpec = try!(bad.parse());
 
     fn get_nightly_date(spec: ToolchainSpec) -> Result<NaiveDate> {
         match spec {
