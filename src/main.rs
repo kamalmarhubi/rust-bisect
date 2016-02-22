@@ -66,7 +66,7 @@ fn run_rust_bisect() -> Result<i32> {
             return None;
         }
 
-        let res = cmd.succeeds_with(&toolchain).expect("run command");
+        let res = cmd.succeeds_with(&toolchain).expect("could not run command");
 
         println!("command {} at {}",
                  if res {
