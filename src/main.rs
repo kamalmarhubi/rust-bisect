@@ -27,22 +27,32 @@ fn run_rust_bisect() -> Result<i32> {
     }
     let matches = App::new("rustc-bisect")
                       .author("Kamal Marhubi <kamal@marhubi.com>")
+                      .about("Find the Rust nightly that introduced a bug")
                       .setting(AppSettings::TrailingVarArg)
+                      .usage("rustc-bisect [FLAGS] --bad <VERSION> --good <VERSION> <COMMAND> \
+                              [ARGS...]")
                       .arg(Arg::with_name("good")
                                .long("good")
                                .takes_value(true)
                                .value_name("VERSION")
+                               .help("A known good nightly release")
                                .validator(validate_version)
                                .required(true))
                       .arg(Arg::with_name("bad")
                                .long("bad")
                                .takes_value(true)
                                .value_name("VERSION")
+                               .help("A known bad nightly release")
                                .validator(validate_version)
                                .required(true))
                       .arg(Arg::with_name("COMMAND")
-                               .multiple(true)
+                               .index(1)
+                               .help("The command to run")
                                .required(true))
+                      .arg(Arg::with_name("ARGS")
+                               .index(2)
+                               .multiple(true)
+                               .help("Arguments for COMMAND"))
                       .get_matches();
 
     let cfg = try!(multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none()));
@@ -60,8 +70,13 @@ fn run_rust_bisect() -> Result<i32> {
                                       .expect("clap validator misbheaved for `bad`")
                                       .parse());
 
-    let cmd: Vec<_> = matches.values_of_os("COMMAND").expect("COMMAND").collect();
-    let cmd = Cmd::from(&cmd[..]);
+    let mut cmd_vec = Vec::new();
+    cmd_vec.push(matches.value_of_os("COMMAND")
+                        .expect("clap didn't respect required arg `COMMAND`"));
+    if let Some(args) = matches.values_of_os("ARGS") {
+        cmd_vec.extend(args);
+    }
+    let cmd = Cmd::from(&cmd_vec[..]);
 
     let range = good_date.num_days_from_ce()..bad_date.num_days_from_ce();
 
