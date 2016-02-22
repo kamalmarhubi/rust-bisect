@@ -1,15 +1,8 @@
-extern crate chrono;
 extern crate multirust;
-extern crate semver;
 
-use std::{error, str};
+use std::error;
 use std::ffi::OsStr;
-use std::fmt::{self, Display};
 use std::ops::Range;
-
-use chrono::NaiveDate;
-use multirust::Toolchain;
-use semver::Version;
 
 pub type Error = Box<error::Error>;
 pub type Result<T> = std::result::Result<T, Error>;
@@ -94,48 +87,6 @@ mod tests {
     }
 }
 
-#[derive(Clone, Debug)]
-pub enum ToolchainSpec {
-    Stable(Version),
-    Nightly(NaiveDate),
-}
-use ToolchainSpec::*;
-
-impl str::FromStr for ToolchainSpec {
-    type Err = Error;
-
-    fn from_str(s: &str) -> Result<ToolchainSpec> {
-        const NIGHTLY: &'static str = "nightly-";
-        if s.starts_with(NIGHTLY) {
-            return Ok(Nightly(try!(s[NIGHTLY.len()..].parse())));
-        } else {
-
-        }
-        unimplemented!();
-    }
-}
-
-impl From<NaiveDate> for ToolchainSpec {
-    fn from(date: NaiveDate) -> ToolchainSpec {
-        Nightly(date)
-    }
-}
-
-impl From<Version> for ToolchainSpec {
-    fn from(v: Version) -> ToolchainSpec {
-        Stable(v)
-    }
-}
-
-impl Display for ToolchainSpec {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            Stable(ref v) => Display::fmt(v, f),
-            Nightly(date) => write!(f, "nightly-{}", date),
-        }
-    }
-}
-
 pub struct Cmd<'a> {
     program: &'a OsStr,
     args: &'a [&'a OsStr],
@@ -152,7 +103,7 @@ impl<'a> Cmd<'a> {
         }
     }
 
-    pub fn succeeds_with<'b>(&self, toolchain: &Toolchain<'b>) -> Result<bool> {
+    pub fn succeeds_with<'b>(&self, toolchain: &multirust::Toolchain<'b>) -> Result<bool> {
         let mut cmd = try!(toolchain.create_command(&self.program));
         cmd.args(self.args);
         let status = try!(cmd.status());

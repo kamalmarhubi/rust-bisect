@@ -10,10 +10,21 @@ use std::process;
 
 use chrono::{Datelike, NaiveDate};
 use clap::{App, AppSettings, Arg};
+use rust_install::dist::ToolchainDesc;
 
-use rustc_bisect::{Cmd, Error, Result, ToolchainSpec, bisect};
+use rustc_bisect::{Cmd, Result, bisect};
+
+const NIGHTLY: &'static str = "nightly";
 
 fn run_rust_bisect() -> Result<i32> {
+    fn validate_version(s: String) -> std::result::Result<(), String> {
+        let ret = ToolchainDesc::from_str(&s);
+        match ret {
+            Some(ref desc) if desc.channel == NIGHTLY && desc.date.is_some() => Ok(()),
+            Some(_) => Err(String::from("can only bisect on dated nightlies")),
+            None => Err(String::from(format!("invalid version: {}", s))),
+        }
+    }
     let matches = App::new("rustc-bisect")
                       .author("Kamal Marhubi <kamal@marhubi.com>")
                       .setting(AppSettings::TrailingVarArg)
@@ -21,44 +32,47 @@ fn run_rust_bisect() -> Result<i32> {
                                .long("good")
                                .takes_value(true)
                                .value_name("VERSION")
+                               .validator(validate_version)
                                .required(true))
                       .arg(Arg::with_name("bad")
                                .long("bad")
                                .takes_value(true)
                                .value_name("VERSION")
+                               .validator(validate_version)
                                .required(true))
                       .arg(Arg::with_name("COMMAND")
                                .multiple(true)
                                .required(true))
                       .get_matches();
 
-
     let cfg = try!(multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none()));
 
     let good = matches.value_of("good").expect("clap didn't respect required arg `good`");
-    let good_spec: ToolchainSpec = try!(good.parse());
+    let good = ToolchainDesc::from_str(good).expect("clap validator misbehaved for `good`");
 
     let bad = matches.value_of("bad").expect("clap didn't respect required arg `bad`");
-    let bad_spec: ToolchainSpec = try!(bad.parse());
+    let bad = ToolchainDesc::from_str(bad).expect("clap validator misbehaved for `bad`");
 
-    fn get_nightly_date(spec: ToolchainSpec) -> Result<NaiveDate> {
-        match spec {
-            ToolchainSpec::Nightly(date) => Ok(date),
-            _ => Err(Error::from("only nightlies for now")),
-        }
-    }
-
-    let good_date = try!(get_nightly_date(good_spec));
-    let bad_date = try!(get_nightly_date(bad_spec));
+    let good_date: NaiveDate = try!(good.date
+                                        .expect("clap validator misbheaved for `good`")
+                                        .parse());
+    let bad_date: NaiveDate = try!(bad.date
+                                      .expect("clap validator misbheaved for `bad`")
+                                      .parse());
 
     let cmd: Vec<_> = matches.values_of_os("COMMAND").expect("COMMAND").collect();
     let cmd = Cmd::from(&cmd[..]);
 
     let range = good_date.num_days_from_ce()..bad_date.num_days_from_ce();
 
+    fn version_string(num_days: i32) -> String {
+        format!("{}-{}", NIGHTLY, NaiveDate::from_num_days_from_ce(num_days))
+    }
+
     let res = bisect(range, |num_days| {
-        let spec = ToolchainSpec::Nightly(NaiveDate::from_num_days_from_ce(num_days));
-        let toolchain = cfg.get_toolchain(&spec.to_string(), false).expect("get_toolchain");
+        let version = version_string(num_days);
+
+        let toolchain = cfg.get_toolchain(&version, false).expect("get_toolchain");
 
         if toolchain.install_from_dist_if_not_installed().is_err() {
             // Assuming this is because the nightly wasn't found.
@@ -74,13 +88,12 @@ fn run_rust_bisect() -> Result<i32> {
                  } else {
                      "failed"
                  },
-                 spec);
+                 version);
         Some(!res)
     });
 
     if let Some(num_days) = res {
-        println!("first failing nightly: {}",
-                 ToolchainSpec::Nightly(NaiveDate::from_num_days_from_ce(num_days)));
+        println!("first failing nightly: {}", version_string(num_days));
         Ok(libc::EXIT_SUCCESS)
     } else {
         println!("bisect failed");
