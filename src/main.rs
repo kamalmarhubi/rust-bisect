@@ -1,16 +1,19 @@
 extern crate chrono;
 extern crate clap;
+extern crate libc;
 extern crate multirust;
 extern crate rust_install;
 
 extern crate rustc_bisect;
+
+use std::process;
 
 use chrono::{Datelike, NaiveDate};
 use clap::{App, AppSettings, Arg};
 
 use rustc_bisect::{Cmd, Error, Result, ToolchainSpec, bisect};
 
-fn run_rust_bisect() -> Result<()> {
+fn run_rust_bisect() -> Result<i32> {
     let matches = App::new("rustc-bisect")
                       .author("Kamal Marhubi <kamal@marhubi.com>")
                       .setting(AppSettings::TrailingVarArg)
@@ -55,7 +58,7 @@ fn run_rust_bisect() -> Result<()> {
 
     let range = good_date.num_days_from_ce()..bad_date.num_days_from_ce();
 
-    let out = bisect(range, |num_days| {
+    let res = bisect(range, |num_days| {
         let spec = ToolchainSpec::Nightly(NaiveDate::from_num_days_from_ce(num_days));
         let toolchain = cfg.get_toolchain(&spec.to_string(), false).expect("get_toolchain");
 
@@ -67,13 +70,18 @@ fn run_rust_bisect() -> Result<()> {
 
         println!("command {} at {}", if res { "succeeded" } else { "failed" }, spec);
         Some(!res)
-    }).expect("bisect");
+    });
 
-    println!("{:?} {:?}", out, NaiveDate::from_num_days_from_ce(out));
-
-    Ok(())
+    if let Some(num_days) = res {
+        println!("first failing nightly: {}",
+                 ToolchainSpec::Nightly(NaiveDate::from_num_days_from_ce(num_days)));
+        Ok(libc::EXIT_SUCCESS)
+    } else {
+        println!("bisect failed");
+        Ok(libc::EXIT_FAILURE)
+    }
 }
 
 fn main() {
-    run_rust_bisect().expect("something went wrong");
+    process::exit(run_rust_bisect().expect("something went wrong"));
 }
