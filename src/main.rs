@@ -1,37 +1,14 @@
-#[macro_use(shared_ntfy)]
-extern crate rust_install;
-
 extern crate chrono;
 extern crate clap;
 extern crate multirust;
+extern crate rust_install;
 
 extern crate rustc_bisect;
 
 use chrono::{Datelike, NaiveDate};
 use clap::{App, AppSettings, Arg};
 
-use multirust::{Cfg, Notification};
-
 use rustc_bisect::{Cmd, Error, Result, ToolchainSpec, bisect};
-
-// Copied from multirust-rs.
-fn set_globals() -> multirust::Result<Cfg> {
-    // Base config
-    let verbose = false;
-    Cfg::from_env(shared_ntfy!(move |n: Notification| {
-        use multirust::notify::NotificationLevel::*;
-        match n.level() {
-            Verbose => {
-                if verbose {
-                    println!("{}", n);
-                }
-            }
-            _ => {
-                println!("{}", n);
-            }
-        }
-    }))
-}
 
 fn run_rust_bisect() -> Result<()> {
     let matches = App::new("rustc-bisect")
@@ -52,7 +29,8 @@ fn run_rust_bisect() -> Result<()> {
                                .required(true))
                       .get_matches();
 
-    let cfg = try!(set_globals());
+    
+    let cfg = try!(multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none()));
 
     use std::str::FromStr;
 
