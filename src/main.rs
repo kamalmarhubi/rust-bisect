@@ -53,7 +53,7 @@ fn run_rust_bisect() -> Result<i32> {
     }
     let matches = App::new("rust-bisect")
                       .author("Kamal Marhubi <kamal@marhubi.com>")
-                      .about("Find the Rust nightly that introduced a bug")
+                      .about("Find the Rust nightly that that changed some behavior")
                       .setting(AppSettings::TrailingVarArg)
                       .usage("rust-bisect [FLAGS] --bad <VERSION> --good <VERSION> <COMMAND> \
                               [ARGS...]")

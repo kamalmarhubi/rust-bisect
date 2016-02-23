@@ -9,7 +9,7 @@ builds to speed up the process.
 ```
 rust-bisect
 Kamal Marhubi <kamal@marhubi.com>
-Find the Rust nightly that introduced a bug
+Find the Rust nightly that that changed some behavior
 
 USAGE:
 	rust-bisect [FLAGS] --bad <VERSION> --good <VERSION> <COMMAND> [ARGS...]
