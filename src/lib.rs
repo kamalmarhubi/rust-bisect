@@ -107,7 +107,6 @@ pub fn run<'a>(cfg: &'a Cfg, mr_cfg: &multirust::Cfg) -> Result<i32> {
         return Ok(libc::EXIT_FAILURE);
     }
 
-    println!("found {} nightlies", nightlies.len());
     println!("bisecting across {} nightlies (about {} steps)",
              nightlies.len(),
              nightlies.len().next_power_of_two().trailing_zeros());
