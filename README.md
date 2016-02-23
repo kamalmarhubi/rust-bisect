@@ -38,6 +38,13 @@ install rust-bisect:
 $ multirust run nightly cargo install rust-bisect
 ```
 
+Note that as rust-bisect uses [multirust-rs] to handle finding, downloading,
+and installing the nightly builds, it requires an install of either
+[multirust-rs] or [multirust].
+
+[multirust]: https://github.com/brson/multirust
+[multirust-rs]: https://github.com/Diggsey/multirust-rs/
+
 **NB** This takes a *really* long time the first time! There are a few changes
 I made in upstream multirust-rs that aren't in any release yet, so I use a git
 dependency. Unfortunately, there is a submodule that has all binaries, and
@@ -52,3 +59,8 @@ which nightly introduced a bug or changed some behavior. It trades compilation
 time for download time when comparing against `git bisect`. This can be
 followed up with a `git bisect` to find the exact commit from among a much
 smaller set of commits.
+
+Since rust-bisect uses multirust-rs, all nightlies that are installed to test
+against will be installed in your multirust root directory. At present they are
+not cleaned up, or in any way distinguished from toolchains you installed
+directly through multirust or multirust-rs.
