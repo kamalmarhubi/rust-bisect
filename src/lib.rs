@@ -1,14 +1,17 @@
 extern crate chrono;
 extern crate clap;
+extern crate hyper;
+extern crate libc;
 extern crate multirust;
 extern crate rust_install;
 
 use std::{error, fmt, str};
 
 use chrono::NaiveDate;
+use hyper::client::Client;
 use rust_install::dist::ToolchainDesc;
 
-pub const NIGHTLY: &'static str = "nightly";
+const NIGHTLY: &'static str = "nightly";
 
 pub type Error = Box<error::Error>;
 pub type Result<T> = std::result::Result<T, Error>;
@@ -24,7 +27,7 @@ pub struct Nightly {
 }
 
 impl Nightly {
-    pub fn to_toolchain_desc(&self) -> ToolchainDesc {
+    fn to_toolchain_desc(&self) -> ToolchainDesc {
         ToolchainDesc {
             date: Some(self.date.to_string()),
             channel: String::from(NIGHTLY),
@@ -56,4 +59,61 @@ impl fmt::Display for Nightly {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}-{}", NIGHTLY, self.date)
     }
+}
+
+fn list_available_nightlies(dist_root: &str,
+                            from: NaiveDate,
+                            to: NaiveDate)
+                            -> Result<Vec<Nightly>> {
+    assert!(from < to, "`from` must be less than `to`");
+    println!("finding available nightlies between {} and {}", from, to);
+    let client = Client::new();
+    let mut nightlies = Vec::with_capacity((to - from).num_days() as usize);
+    let mut date = from;
+    while date < to {
+        let nightly = Nightly::from(date);
+        let manifest_url = nightly.to_toolchain_desc().manifest_url(dist_root);
+        let resp = try!(client.head(&manifest_url).send());
+        // TODO: ensure failures are 404
+        if resp.status.is_success() {
+            nightlies.push(nightly);
+        }
+        date = date.succ();
+    }
+    println!("found {} nightlies", nightlies.len());
+    Ok(nightlies)
+}
+
+pub fn run<'a>(cfg: &'a cli::Cfg, mr_cfg: &multirust::Cfg) -> Result<i32> {
+
+    let nightlies = try!(list_available_nightlies(&*mr_cfg.dist_root_url,
+                                                  cfg.good.date,
+                                                  cfg.bad.date));
+    println!("bisecting across {} nightlies (about {} steps)",
+             nightlies.len(),
+             nightlies.len().next_power_of_two().trailing_zeros());
+
+    let idx = least_satisfying(&nightlies[..], |nightly| {
+        println!("testing with {}", nightly);
+
+        let toolchain = mr_cfg.get_toolchain(&nightly.to_string(), false)
+                              .expect("could not get toolchain");
+        toolchain.install_from_dist_if_not_installed().expect("could not install toolchain");
+
+        let mut cmd = toolchain.create_command(cfg.cmd).expect("could not create command");
+        cmd.args(&cfg.args);
+        let res = cmd.status().expect("could not run command").success();
+
+        println!("command {} with {}",
+                 if res {
+                     "succeeded"
+                 } else {
+                     "failed"
+                 },
+                 nightly);
+        !res
+    });
+
+    println!("{} is the first failing nightly", nightlies[idx]);
+    Ok(libc::EXIT_SUCCESS)
 }
