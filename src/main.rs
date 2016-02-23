@@ -39,25 +39,13 @@ fn list_available_nightlies(dist_root: &str,
 
 fn run_rust_bisect() -> Result<i32> {
     let matches = cli::app().get_matches();
+    let cfg = try!(cli::Cfg::from_matches(&matches));
 
-    let cfg = try!(multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none()));
+    let mr_cfg = try!(multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none()));
 
-    let good: Nightly = matches.value_of("good")
-                               .expect("clap didn't respect required arg `good`")
-                               .parse()
-                               .expect("clap validator misbehaved for `good`");
-    let bad: Nightly = matches.value_of("bad")
-                              .expect("clap didn't respect required arg `bad`")
-                              .parse()
-                              .expect("clap validator misbehaved for `bad`");
-
-    let cmd = matches.value_of_os("COMMAND")
-                     .expect("clap didn't respect required arg `COMMAND`");
-    let args: Vec<_> = matches.values_of_os("ARGS")
-                              .map(|args| args.collect())
-                              .unwrap_or(Vec::new());
-
-    let nightlies = try!(list_available_nightlies(&*cfg.dist_root_url, good.date, bad.date));
+    let nightlies = try!(list_available_nightlies(&*mr_cfg.dist_root_url,
+                                                  cfg.good.date,
+                                                  cfg.bad.date));
     println!("bisecting across {} nightlies (about {} steps)",
              nightlies.len(),
              nightlies.len().next_power_of_two().trailing_zeros());
@@ -65,12 +53,12 @@ fn run_rust_bisect() -> Result<i32> {
     let idx = least_satisfying(&nightlies[..], |nightly| {
         println!("testing with {}", nightly);
 
-        let toolchain = cfg.get_toolchain(&nightly.to_string(), false)
-                           .expect("could not get toolchain");
+        let toolchain = mr_cfg.get_toolchain(&nightly.to_string(), false)
+                              .expect("could not get toolchain");
         toolchain.install_from_dist_if_not_installed().expect("could not install toolchain");
 
-        let mut cmd = toolchain.create_command(cmd).expect("could not create command");
-        cmd.args(&args);
+        let mut cmd = toolchain.create_command(cfg.cmd).expect("could not create command");
+        cmd.args(&cfg.args);
         let res = cmd.status().expect("could not run command").success();
 
         println!("command {} with {}",

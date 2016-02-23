@@ -1,10 +1,13 @@
-use clap::{App, AppSettings, Arg};
+use std;
+use std::ffi::OsStr;
+
+use clap::{App, AppSettings, Arg, ArgMatches};
 use rust_install::dist::ToolchainDesc;
 
-use NIGHTLY;
+use {NIGHTLY, Nightly, Result};
 
 pub fn app() -> App<'static, 'static> {
-    fn validate_version(s: String) -> Result<(), String> {
+    fn validate_version(s: String) -> std::result::Result<(), String> {
         let ret = ToolchainDesc::from_str(&s);
         match ret {
             Some(ref desc) if desc.channel == NIGHTLY && desc.date.is_some() => Ok(()),
@@ -39,4 +42,34 @@ pub fn app() -> App<'static, 'static> {
                  .index(2)
                  .multiple(true)
                  .help("Arguments for COMMAND"))
+}
+
+#[derive(Debug)]
+pub struct Cfg<'a> {
+    pub good: Nightly,
+    pub bad: Nightly,
+    pub cmd: &'a OsStr,
+    pub args: Vec<&'a OsStr>,
+}
+
+impl<'a> Cfg<'a> {
+    pub fn from_matches(matches: &'a ArgMatches<'a>) -> Result<Cfg<'a>> {
+        let good = try!(matches.value_of("good").ok_or("missing arg: `good`"));
+        let good: Nightly = try!(good.parse());
+
+        let bad = try!(matches.value_of("bad").ok_or("missing arg: `bad`"));
+        let bad: Nightly = try!(bad.parse());
+
+        let cmd = try!(matches.value_of_os("COMMAND").ok_or("missing arg: `COMMAND`"));
+        let args: Vec<_> = matches.values_of_os("ARGS")
+                                  .map(|args| args.collect())
+                                  .unwrap_or(Vec::new());
+
+        Ok(Cfg {
+            good: good,
+            bad: bad,
+            cmd: cmd,
+            args: args,
+        })
+    }
 }
