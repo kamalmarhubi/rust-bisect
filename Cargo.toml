@@ -8,6 +8,21 @@ chrono = "0.2"
 clap = "2"
 hyper = "0.7.2"
 libc = "0.2"
-multirust-rs = { git = "https://github.com/Diggsey/multirust-rs.git" }
-rust-install = { git = "https://github.com/Diggsey/multirust-rs.git", path = "rust-install" }
 semver = "0.2"
+
+# Use git versions of multirust crates until the `new` branch is merged back
+# into `master` and there's a release. See
+#   https://github.com/Diggsey/multirust-rs/issues/54
+# Unfortunately, there is a submodule that has all binaries, and Cargo will get
+# the submodule and its entire history, which drastically slows down the
+# initial build as it downloads almost 700 MB of binaries.
+[dependencies.multirust-rs]
+git = "https://github.com/Diggsey/multirust-rs.git"
+branch = "new"
+rev = "c350ddb"
+
+[dependencies.rust-install]
+git = "https://github.com/Diggsey/multirust-rs.git"
+branch = "new"
+rev = "c350ddb"
+path = "rust-install"

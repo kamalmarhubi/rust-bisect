@@ -6,8 +6,8 @@ dependencies = [
  "clap 2.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "multirust-rs 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git)",
- "rust-install 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git)",
+ "multirust-rs 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git?branch=new)",
+ "rust-install 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git?branch=new)",
  "semver 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -83,6 +83,23 @@ dependencies = [
  "rustc-serialize 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
  "time 0.1.34 (registry+https://github.com/rust-lang/crates.io-index)",
  "url 0.5.4 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "filetime"
+version = "0.1.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "libc 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "flate2"
+version = "0.2.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "libc 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "miniz-sys 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -222,9 +239,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "miniz-sys"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "gcc 0.3.22 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "multirust-rs"
 version = "0.0.4"
-source = "git+https://github.com/Diggsey/multirust-rs.git#256015c16678f6b7a2498b7f5f1b33505204eb3f"
+source = "git+https://github.com/Diggsey/multirust-rs.git?branch=new#c350ddb447b6bd7e431c1a8af796bb5b345b8e8d"
 dependencies = [
  "clap 1.5.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -232,7 +258,7 @@ dependencies = [
  "openssl 0.7.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.3.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.1.48 (registry+https://github.com/rust-lang/crates.io-index)",
- "rust-install 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git)",
+ "rust-install 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git?branch=new)",
  "term 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "user32-sys 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -344,17 +370,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "rust-install"
 version = "0.0.4"
-source = "git+https://github.com/Diggsey/multirust-rs.git#256015c16678f6b7a2498b7f5f1b33505204eb3f"
+source = "git+https://github.com/Diggsey/multirust-rs.git?branch=new#c350ddb447b6bd7e431c1a8af796bb5b345b8e8d"
 dependencies = [
+ "flate2 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "itertools 0.4.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "ole32-sys 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "openssl 0.7.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.3.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.1.48 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rust-manifest 0.0.1 (git+https://github.com/Diggsey/multirust-rs.git?branch=new)",
  "shell32-sys 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tar 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tempdir 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "toml 0.1.27 (registry+https://github.com/rust-lang/crates.io-index)",
+ "walkdir 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "winreg 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "rust-manifest"
+version = "0.0.1"
+source = "git+https://github.com/Diggsey/multirust-rs.git?branch=new#c350ddb447b6bd7e431c1a8af796bb5b345b8e8d"
+dependencies = [
+ "toml 0.1.27 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -415,6 +455,15 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "tar"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "filetime 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "tempdir"
 version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -439,6 +488,14 @@ dependencies = [
  "kernel32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "toml"
+version = "0.1.27"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "rustc-serialize 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -506,6 +563,15 @@ dependencies = [
 name = "vec_map"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "walkdir"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "kernel32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "winapi 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "winapi"
