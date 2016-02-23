@@ -3,7 +3,7 @@
 pub fn least_satisfying<T, P>(slice: &[T], mut predicate: P) -> usize
     where P: FnMut(&T) -> bool
 {
-    // TODO: assert if fails and succedds at the ends?
+    // TODO: assert if fails and succeeds at the ends?
     // TODO: make it return Option<usize>, in case predicate holds nowhere.
     let mut base = 0usize;
     let mut s = slice;
