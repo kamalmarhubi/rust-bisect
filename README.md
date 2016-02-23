@@ -101,10 +101,11 @@ nightly-2015-11-27 is the first failing nightly
 ```
 
 In the discussion on [#30123][issue-30123], the commit that changed the
-behavior [was identified][identified] as [f5fbefa][commit]. That commit was part of pull
-request [#30043][pr], which was [merged on 2015-11-26][merged]. It looks like
-we found the right nightly! We can check further by finding looking at the rust
-repository's history between `nightly-2015-11-26` and `nightly-2015-11-27`:
+behavior [was identified][identified] as [f5fbefa][commit]. That commit was
+part of pull request [#30043][pr], which was [merged on 2015-11-26][merged]. It
+looks like we found the right nightly! We can check further by finding looking
+at the rust repository's history between `nightly-2015-11-26` and
+`nightly-2015-11-27`:
 
 ```
 rust$ multirust run nightly-2015-11-26 rustc -V
@@ -117,16 +118,17 @@ f5fbefa remove csearch from resolve and typeck
 
 There it is!
 
-After using rust-bisect, we could have used `git bisect` to narrow
-it down to the exact commit. In this case, that would be testing over just 30
-commits, which would require about 5 steps to bisect:
+After using rust-bisect, we could have used `git bisect` to narrow it down to
+the exact commit. In this case, that would be testing over just 30 commits,
+which would require about 5 steps to bisect:
 
 ```
 rust$ git log --oneline 1805bba39..1727dee16 | wc -l
 30
 ```
 
-Compare that against the number of commits if we had to `git bisect` across the whole range:
+Compare that against the number of commits if we had to `git bisect` across the
+whole range:
 
 ```
 rust$ multirust run nightly-2015-10-27 rustc -V
