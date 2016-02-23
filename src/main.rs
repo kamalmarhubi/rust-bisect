@@ -6,12 +6,12 @@ extern crate rust_bisect;
 
 use std::process;
 
-use rust_bisect::{Result, cli};
+use rust_bisect::{Cfg, Result, cli};
 
 fn main() {
     fn run() -> Result<i32> {
         let matches = cli::app().get_matches();
-        let cfg = match cli::Cfg::from_matches(&matches) {
+        let cfg = match Cfg::from_matches(&matches) {
             Ok(cfg) => cfg,
             Err(ref e) => {
                 try!(cli::display_error(e));

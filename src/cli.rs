@@ -1,12 +1,11 @@
 use std;
 use std::fmt;
-use std::ffi::OsStr;
 
 use clap::{App, AppSettings, Arg, ArgMatches};
 use rust_install::dist::ToolchainDesc;
 use term;
 
-use {NIGHTLY, Error, Nightly, Result};
+use {NIGHTLY, Cfg, Error, Nightly, Result};
 
 pub fn app() -> App<'static, 'static> {
     fn validate_version(s: String) -> std::result::Result<(), String> {
@@ -44,14 +43,6 @@ pub fn app() -> App<'static, 'static> {
                  .index(2)
                  .multiple(true)
                  .help("Arguments for COMMAND"))
-}
-
-#[derive(Debug)]
-pub struct Cfg<'a> {
-    pub good: Nightly,
-    pub bad: Nightly,
-    pub cmd: &'a OsStr,
-    pub args: Vec<&'a OsStr>,
 }
 
 impl<'a> Cfg<'a> {

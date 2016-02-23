@@ -7,6 +7,7 @@ extern crate rust_install;
 extern crate term;
 
 use std::{error, fmt, str};
+use std::ffi::OsStr;
 
 use chrono::NaiveDate;
 use hyper::client::Client;
@@ -62,6 +63,14 @@ impl fmt::Display for Nightly {
     }
 }
 
+#[derive(Debug)]
+pub struct Cfg<'a> {
+    pub good: Nightly,
+    pub bad: Nightly,
+    pub cmd: &'a OsStr,
+    pub args: Vec<&'a OsStr>,
+}
+
 fn list_available_nightlies(dist_root: &str,
                             from: NaiveDate,
                             to: NaiveDate)
@@ -83,7 +92,7 @@ fn list_available_nightlies(dist_root: &str,
     Ok(nightlies)
 }
 
-pub fn run<'a>(cfg: &'a cli::Cfg, mr_cfg: &multirust::Cfg) -> Result<i32> {
+pub fn run<'a>(cfg: &'a Cfg, mr_cfg: &multirust::Cfg) -> Result<i32> {
 
     println!("finding available nightlies between {} and {}",
              cfg.good,
