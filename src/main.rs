@@ -1,5 +1,6 @@
 extern crate chrono;
 extern crate clap;
+extern crate hyper;
 extern crate libc;
 extern crate multirust;
 extern crate rust_install;
@@ -8,13 +9,38 @@ extern crate rustc_bisect;
 
 use std::process;
 
-use chrono::{Datelike, NaiveDate};
+use chrono::NaiveDate;
 use clap::{App, AppSettings, Arg};
+use hyper::client::Client;
 use rust_install::dist::ToolchainDesc;
 
-use rustc_bisect::{Result, bisect};
+use rustc_bisect::{Result, least_satisfying};
 
 const NIGHTLY: &'static str = "nightly";
+
+fn nightly(date: NaiveDate) -> String {
+    format!("{}-{}", NIGHTLY, date)
+}
+
+fn list_available_nightlies(dist_root: &str,
+                            from: NaiveDate,
+                            to: NaiveDate)
+                            -> Result<Vec<NaiveDate>> {
+    assert!(from < to, "`from` must be less than `to`");
+    let client = Client::new();
+    let mut nightlies = Vec::with_capacity((to - from).num_days() as usize);
+    let mut date = from;
+    while date < to {
+        let desc = ToolchainDesc::from_str(&nightly(date)).expect("should always parse");
+        let resp = try!(client.head(&desc.manifest_url(dist_root)).send());
+        // TODO: ensure failures are 404
+        if resp.status.is_success() {
+            nightlies.push(date);
+        }
+        date = date.succ();
+    }
+    Ok(nightlies)
+}
 
 fn run_rust_bisect() -> Result<i32> {
     fn validate_version(s: String) -> std::result::Result<(), String> {
@@ -55,6 +81,7 @@ fn run_rust_bisect() -> Result<i32> {
                                .help("Arguments for COMMAND"))
                       .get_matches();
 
+
     let cfg = try!(multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none()));
 
     let good = matches.value_of("good").expect("clap didn't respect required arg `good`");
@@ -76,22 +103,13 @@ fn run_rust_bisect() -> Result<i32> {
                               .map(|args| args.collect())
                               .unwrap_or(Vec::new());
 
-    let range = good_date.num_days_from_ce()..bad_date.num_days_from_ce();
+    let nightlies = try!(list_available_nightlies(&*cfg.dist_root_url, good_date, bad_date));
 
-    fn version_string(num_days: i32) -> String {
-        format!("{}-{}", NIGHTLY, NaiveDate::from_num_days_from_ce(num_days))
-    }
+    let idx = least_satisfying(&nightlies[..], |date| {
+        let version = nightly(*date);
+        let toolchain = cfg.get_toolchain(&version, false).expect("could not get toolchain");
 
-    let res = bisect(range, |num_days| {
-        let version = version_string(num_days);
-
-        let toolchain = cfg.get_toolchain(&version, false).expect("get_toolchain");
-
-        if toolchain.install_from_dist_if_not_installed().is_err() {
-            // Assuming this is because the nightly wasn't found.
-            // TODO: check the error, and have better reporting.
-            return None;
-        }
+        toolchain.install_from_dist_if_not_installed().expect("could not install toolchain");
 
         let mut cmd = toolchain.create_command(cmd).expect("could not create command");
         cmd.args(&args);
@@ -104,16 +122,11 @@ fn run_rust_bisect() -> Result<i32> {
                      "failed"
                  },
                  version);
-        Some(!res)
+        !res
     });
 
-    if let Some(num_days) = res {
-        println!("first failing nightly: {}", version_string(num_days));
-        Ok(libc::EXIT_SUCCESS)
-    } else {
-        println!("bisect failed");
-        Ok(libc::EXIT_FAILURE)
-    }
+    println!("first failing nightly: {}", nightly(nightlies[idx]));
+    Ok(libc::EXIT_SUCCESS)
 }
 
 fn main() {

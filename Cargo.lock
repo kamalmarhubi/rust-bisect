@@ -4,6 +4,7 @@ version = "0.1.0"
 dependencies = [
  "chrono 0.2.19 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hyper 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "multirust-rs 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git)",
  "rust-install 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git)",
