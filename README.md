@@ -101,7 +101,7 @@ nightly-2015-11-27 is the first failing nightly
 ```
 
 In the discussion on [#30123][issue-30123], the commit that changed the
-behavior [was identified] as [f5fbefa][commit]. That commit was part of pull
+behavior [was identified][identified] as [f5fbefa][commit]. That commit was part of pull
 request [#30043][pr], which was [merged on 2015-11-26][merged]. It looks like
 we found the right nightly! We can check further by finding looking at the rust
 repository's history between `nightly-2015-11-26` and `nightly-2015-11-27`:
