@@ -32,9 +32,9 @@ ARGS:
 
 ## Installation
 
-rust-bisect uses the multirust-rs crate as a library, which currently requires
-a nightly build to install. I suggest using multirust and cargo-install to
-install rust-bisect:
+rust-bisect uses the [multirust-rs] crate as a library, which currently
+requires a nightly build to install. I suggest using multirust and
+cargo-install to install rust-bisect:
 
 ```
 $ multirust run nightly cargo install rust-bisect
