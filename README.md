@@ -35,13 +35,9 @@ ARGS:
 
 ## Installation
 
-rust-bisect uses the [multirust-rs] crate as a library, which currently
-requires a nightly build to install. I suggest using multirust and
-cargo-install to install rust-bisect:
-
-```
-$ multirust run nightly cargo install rust-bisect
-```
+rust-bisect isn't on crates.io yet, as I need a few unreleased changes in
+[multirust-rs]. In the meantime, you can clone this repository and build it
+though!
 
 Note that as rust-bisect uses [multirust-rs] to handle finding, downloading,
 and installing the nightly builds, it requires an install of either
@@ -50,11 +46,11 @@ and installing the nightly builds, it requires an install of either
 [multirust]: https://github.com/brson/multirust
 [multirust-rs]: https://github.com/Diggsey/multirust-rs/
 
-**NB** This takes a *really* long time the first time! There are a few changes
-I made in upstream multirust-rs that aren't in any release yet, so I use a git
-dependency. Unfortunately, there is a submodule that has all binaries, and
-Cargo will get the submodule and its entire history, which drastically slows
-down the initial build as it downloads almost 700 MB of binaries.
+**NB** Building takes a *really* long time the first time! I'm using a git
+dependency for multirust-rs.  Unfortunately, there is a submodule that has all
+binaries, and Cargo will get the submodule and its entire history, which
+drastically slows down the initial build as it downloads almost 700 MB of
+binaries.
 
 
 ## How it works
