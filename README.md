@@ -6,7 +6,7 @@ builds to speed up the process. This is faster in at least a couple of ways:
 - at over 100 pull requests merged per week, there are far more commits to
   bisect than there are nightly builds
 - to run an individual test, all rust-bisect needs to do is download the
-  nightly: no slow Rust build!
+  nightly: no slow Rust build at each step!
 
 ## Usage
 
