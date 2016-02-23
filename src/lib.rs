@@ -4,6 +4,7 @@ extern crate hyper;
 extern crate libc;
 extern crate multirust;
 extern crate rust_install;
+extern crate term;
 
 use std::{error, fmt, str};
 
@@ -66,7 +67,6 @@ fn list_available_nightlies(dist_root: &str,
                             to: NaiveDate)
                             -> Result<Vec<Nightly>> {
     assert!(from < to, "`from` must be less than `to`");
-    println!("finding available nightlies between {} and {}", from, to);
     let client = Client::new();
     let mut nightlies = Vec::with_capacity((to - from).num_days() as usize);
     let mut date = from;
@@ -80,15 +80,25 @@ fn list_available_nightlies(dist_root: &str,
         }
         date = date.succ();
     }
-    println!("found {} nightlies", nightlies.len());
     Ok(nightlies)
 }
 
 pub fn run<'a>(cfg: &'a cli::Cfg, mr_cfg: &multirust::Cfg) -> Result<i32> {
 
+    println!("finding available nightlies between {} and {}",
+             cfg.good,
+             cfg.bad);
     let nightlies = try!(list_available_nightlies(&*mr_cfg.dist_root_url,
                                                   cfg.good.date,
                                                   cfg.bad.date));
+    if nightlies.is_empty() {
+        try!(cli::display_error(format!("no nightlies found between {} and {}",
+                                        cfg.good,
+                                        cfg.bad)));
+        return Ok(libc::EXIT_FAILURE);
+    }
+
+    println!("found {} nightlies", nightlies.len());
     println!("bisecting across {} nightlies (about {} steps)",
              nightlies.len(),
              nightlies.len().next_power_of_two().trailing_zeros());

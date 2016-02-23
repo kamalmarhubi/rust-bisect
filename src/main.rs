@@ -1,3 +1,4 @@
+extern crate libc;
 extern crate multirust;
 extern crate rust_install;
 
@@ -10,7 +11,14 @@ use rust_bisect::{Result, cli};
 fn main() {
     fn run() -> Result<i32> {
         let matches = cli::app().get_matches();
-        let cfg = try!(cli::Cfg::from_matches(&matches));
+        let cfg = match cli::Cfg::from_matches(&matches) {
+            Ok(cfg) => cfg,
+            Err(ref e) => {
+                try!(cli::display_error(e));
+
+                return Ok(libc::EXIT_FAILURE);
+            }
+        };
 
         let mr_cfg =
             try!(multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none()));

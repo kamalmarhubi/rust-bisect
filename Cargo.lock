@@ -9,6 +9,7 @@ dependencies = [
  "multirust-rs 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git?branch=new)",
  "rust-install 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git?branch=new)",
  "semver 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "term 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -474,6 +475,15 @@ dependencies = [
 [[package]]
 name = "term"
 version = "0.2.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "kernel32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "winapi 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "term"
+version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "kernel32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",

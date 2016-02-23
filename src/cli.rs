@@ -1,10 +1,12 @@
 use std;
+use std::fmt;
 use std::ffi::OsStr;
 
 use clap::{App, AppSettings, Arg, ArgMatches};
 use rust_install::dist::ToolchainDesc;
+use term;
 
-use {NIGHTLY, Nightly, Result};
+use {NIGHTLY, Error, Nightly, Result};
 
 pub fn app() -> App<'static, 'static> {
     fn validate_version(s: String) -> std::result::Result<(), String> {
@@ -60,6 +62,10 @@ impl<'a> Cfg<'a> {
         let bad = try!(matches.value_of("bad").ok_or("missing arg: `bad`"));
         let bad: Nightly = try!(bad.parse());
 
+        if bad.date < good.date {
+            return Err(Error::from("`bad` must be after `good`"));
+        }
+
         let cmd = try!(matches.value_of_os("COMMAND").ok_or("missing arg: `COMMAND`"));
         let args: Vec<_> = matches.values_of_os("ARGS")
                                   .map(|args| args.collect())
@@ -72,4 +78,21 @@ impl<'a> Cfg<'a> {
             args: args,
         })
     }
+}
+
+pub fn display_error<E: fmt::Display>(e: E) -> Result<()> {
+    use std::io::Write;
+    if let Some(mut t) = term::stdout() {
+        try!(t.fg(term::color::RED));
+        try!(t.attr(term::Attr::Bold));
+
+        try!(write!(t, "error: "));
+
+        try!(t.reset());
+    } else {
+        print!("error: ");
+    }
+    println!("{}", e);
+
+    Ok(())
 }
