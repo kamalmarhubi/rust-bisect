@@ -5,7 +5,7 @@ extern crate libc;
 extern crate multirust;
 extern crate rust_install;
 
-extern crate rustc_bisect;
+extern crate rust_bisect;
 
 use std::process;
 
@@ -14,7 +14,7 @@ use clap::{App, AppSettings, Arg};
 use hyper::client::Client;
 use rust_install::dist::ToolchainDesc;
 
-use rustc_bisect::{Result, least_satisfying};
+use rust_bisect::{Result, least_satisfying};
 
 const NIGHTLY: &'static str = "nightly";
 
@@ -51,11 +51,11 @@ fn run_rust_bisect() -> Result<i32> {
             None => Err(String::from(format!("invalid version: {}", s))),
         }
     }
-    let matches = App::new("rustc-bisect")
+    let matches = App::new("rust-bisect")
                       .author("Kamal Marhubi <kamal@marhubi.com>")
                       .about("Find the Rust nightly that introduced a bug")
                       .setting(AppSettings::TrailingVarArg)
-                      .usage("rustc-bisect [FLAGS] --bad <VERSION> --good <VERSION> <COMMAND> \
+                      .usage("rust-bisect [FLAGS] --bad <VERSION> --good <VERSION> <COMMAND> \
                               [ARGS...]")
                       .arg(Arg::with_name("good")
                                .long("good")

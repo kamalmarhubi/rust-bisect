@@ -1,5 +1,5 @@
 [package]
-name = "rustc-bisect"
+name = "rust-bisect"
 version = "0.1.0"
 authors = ["Kamal Marhubi <kamal@marhubi.com>"]
 license = "MIT"
@@ -7,8 +7,8 @@ license = "MIT"
 description = "Find the Rust nightly that introduced a bug"
 keywords = ["bisect", "rust"]
 
-homepage = "https://github.com/kamalmarhubi/rustc-bisect"
-repository = "https://github.com/kamalmarhubi/rustc-bisect.git"
+homepage = "https://github.com/kamalmarhubi/rust-bisect"
+repository = "https://github.com/kamalmarhubi/rust-bisect.git"
 
 include = ["src/**/*", "Cargo.toml", "README.md"]
 readme = "README.md"

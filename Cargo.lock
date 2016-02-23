@@ -1,5 +1,5 @@
 [root]
-name = "rustc-bisect"
+name = "rust-bisect"
 version = "0.1.0"
 dependencies = [
  "chrono 0.2.19 (registry+https://github.com/rust-lang/crates.io-index)",
