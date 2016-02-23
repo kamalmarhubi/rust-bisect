@@ -26,7 +26,6 @@ ARGS:
     COMMAND    The command to run
     ARGS...    Arguments for COMMAND
 
-rust-bisect [--good=TOOLCHAIN] [--bad=TOOLCHAIN] COMMAND [ARGS...]
 ```
 
 ## Installation
