@@ -27,6 +27,7 @@ fn list_available_nightlies(dist_root: &str,
                             to: NaiveDate)
                             -> Result<Vec<NaiveDate>> {
     assert!(from < to, "`from` must be less than `to`");
+    println!("finding available nightlies between {} and {}", from, to);
     let client = Client::new();
     let mut nightlies = Vec::with_capacity((to - from).num_days() as usize);
     let mut date = from;
@@ -39,6 +40,7 @@ fn list_available_nightlies(dist_root: &str,
         }
         date = date.succ();
     }
+    println!("found {} nightlies", nightlies.len());
     Ok(nightlies)
 }
 
@@ -104,18 +106,22 @@ fn run_rust_bisect() -> Result<i32> {
                               .unwrap_or(Vec::new());
 
     let nightlies = try!(list_available_nightlies(&*cfg.dist_root_url, good_date, bad_date));
+    println!("bisecting across {} nightlies (about {} steps)",
+             nightlies.len(),
+             nightlies.len().next_power_of_two().trailing_zeros());
 
     let idx = least_satisfying(&nightlies[..], |date| {
         let version = nightly(*date);
-        let toolchain = cfg.get_toolchain(&version, false).expect("could not get toolchain");
+        println!("testing with {}", version);
 
+        let toolchain = cfg.get_toolchain(&version, false).expect("could not get toolchain");
         toolchain.install_from_dist_if_not_installed().expect("could not install toolchain");
 
         let mut cmd = toolchain.create_command(cmd).expect("could not create command");
         cmd.args(&args);
         let res = cmd.status().expect("could not run command").success();
 
-        println!("command {} at {}",
+        println!("command {} with {}",
                  if res {
                      "succeeded"
                  } else {
@@ -125,7 +131,7 @@ fn run_rust_bisect() -> Result<i32> {
         !res
     });
 
-    println!("first failing nightly: {}", nightly(nightlies[idx]));
+    println!("{} is the first failing nightly", nightly(nightlies[idx]));
     Ok(libc::EXIT_SUCCESS)
 }
 
