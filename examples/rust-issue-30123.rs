@@ -23,7 +23,7 @@ fn main() {
         args: args,
     };
 
-    let mr_cfg = multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none())
+    let mr_cfg = multirust::Cfg::from_env(rust_bisect::cli::notify_handler())
                      .expect("multirust config");
 
     rust_bisect::run(&cfg, &mr_cfg).unwrap();

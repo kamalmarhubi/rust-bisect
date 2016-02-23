@@ -2,10 +2,26 @@ use std;
 use std::fmt;
 
 use clap::{App, AppSettings, Arg, ArgMatches};
+use multirust;
 use rust_install::dist::ToolchainDesc;
 use term;
 
 use {NIGHTLY, Cfg, Error, Nightly, Result};
+
+pub fn notify_handler() -> multirust::SharedNotifyHandler {
+    shared_ntfy!(move |n: multirust::Notification| {
+        use multirust::notify::NotificationLevel::*;
+        match n.level() {
+            Verbose => {}
+            Error => {
+                display_error(n).unwrap();
+            }
+            _ => {
+                println!("{}", n);
+            }
+        }
+    })
+}
 
 pub fn app() -> App<'static, 'static> {
     fn validate_version(s: String) -> std::result::Result<(), String> {

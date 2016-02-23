@@ -1,9 +1,11 @@
+#[macro_use(shared_ntfy)]
+extern crate rust_install;
+
 extern crate chrono;
 extern crate clap;
 extern crate hyper;
 extern crate libc;
 extern crate multirust;
-extern crate rust_install;
 extern crate term;
 
 use std::{error, fmt, str};

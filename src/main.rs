@@ -19,9 +19,8 @@ fn main() {
                 return Ok(libc::EXIT_FAILURE);
             }
         };
+        let mr_cfg = try!(multirust::Cfg::from_env(cli::notify_handler()));
 
-        let mr_cfg =
-            try!(multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none()));
         rust_bisect::run(&cfg, &mr_cfg)
     }
 
