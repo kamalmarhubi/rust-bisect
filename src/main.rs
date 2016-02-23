@@ -91,10 +91,10 @@ fn run_rust_bisect() -> Result<i32> {
     let bad = ToolchainDesc::from_str(bad).expect("clap validator misbehaved for `bad`");
 
     let good_date: NaiveDate = try!(good.date
-                                        .expect("clap validator misbheaved for `good`")
+                                        .expect("clap validator misbehaved for `good`")
                                         .parse());
     let bad_date: NaiveDate = try!(bad.date
-                                      .expect("clap validator misbheaved for `bad`")
+                                      .expect("clap validator misbehaved for `bad`")
                                       .parse());
 
     let cmd = matches.value_of_os("COMMAND")
