@@ -64,3 +64,80 @@ Since rust-bisect uses multirust-rs, all nightlies that are installed to test
 against will be installed in your multirust root directory. At present they are
 not cleaned up, or in any way distinguished from toolchains you installed
 directly through multirust or multirust-rs.
+
+## Example
+
+This example is based on a real Rust issue, [#30123][issue-30123]. This issue
+was reported on 2015-11-30, and referred to behavior differing from 1.4.0,
+which was built from a commit dated 2015-10-27:
+
+```
+$ multirust run 1.4.0 rustc -vV
+rustc 1.4.0 (8ab8581f6 2015-10-27)
+binary: rustc
+commit-hash: 8ab8581f6921bc7a8e3fa4defffd2814372dcb15
+commit-date: 2015-10-27
+host: x86_64-unknown-linux-gnu
+release: 1.4.0
+```
+
+We can run rust-bisect on the example crate in `examples/rust-issue-30123`,
+which I extracted from the test added for the issue. The command we use is
+`cargo build`, since the issue manifested as a compilation failure.
+
+```
+$ rust-bisect --good nightly-2015-10-27 --bad nightly-2015-11-30 cargo build
+finding available nightlies between 2015-10-27 and 2015-11-30
+found 23 nightlies
+bisecting across 23 nightlies (about 5 steps)
+testing with nightly-2015-11-13
+   Compiling aux v0.1.0 (file:///home/kamal/projects/rust-bisect/examples/rust-issue-30123)
+[...]
+command succeeded with nightly-2015-11-26
+nightly-2015-11-27 is the first failing nightly
+```
+
+In the discussion on [#30123][issue-30123], the commit that changed the
+behavior [was identified] as [f5fbefa][commit]. That commit was part of pull
+request [#30043][pr], which was [merged on 2015-11-26][merged]. It looks like
+we found the right nightly! We can check further by finding looking at the rust
+repository's history between `nightly-2015-11-26` and `nightly-2015-11-27`:
+
+```
+rust$ multirust run nightly-2015-11-26 rustc -V
+rustc 1.6.0-nightly (1805bba39 2015-11-26)
+rust$ multirust run nightly-2015-11-27 rustc -V
+rustc 1.6.0-nightly (1727dee16 2015-11-26)
+rust$ git log --oneline 1805bba39..1727dee16 | grep f5fbefa
+f5fbefa remove csearch from resolve and typeck
+```
+
+There it is! After using rust-bisect, we could have used `git bisect` to narrow
+it down to the exact commit. In this case, that would be testing over just 30
+commits, which would require about 5 steps to bisect:
+
+```
+rust$ git log --oneline 1805bba39..1727dee16 | wc -l
+30
+```
+
+Compare that against the number of commits if we had to `git bisect` across the whole range:
+
+```
+rust$ multirust run nightly-2015-10-27 rustc -V
+rustc 1.5.0-nightly (95fb8d1c8 2015-10-27)
+rust$ multirust run nightly-2015-11-30 rustc -V
+rustc 1.6.0-nightly (52d95e644 2015-11-30)
+rust$ git log --oneline 95fb8d1c8..52d95e644 | wc -l
+881
+```
+
+Many more commits! Of course, because of binary search and logarithms, it would
+only be double the number of bisect steps. But that's still double the number
+of compiles of the Rust codebase!
+
+[issue-30123]: https://github.com/rust-lang/rust/issues/30123
+[identified]: https://github.com/rust-lang/rust/issues/30123#issuecomment-172980819
+[commit]: https://github.com/rust-lang/rust/commit/f5fbefa3af48ed44b002a7423d6cbd74e4018c9c
+[pr]: https://github.com/rust-lang/rust/pull/30043
+[merged]: https://github.com/rust-lang/rust/pull/30043#event-475858549
