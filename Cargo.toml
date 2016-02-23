@@ -1,7 +1,18 @@
 [package]
-authors = ["Kamal Marhubi <kamal@marhubi.com>"]
 name = "rustc-bisect"
 version = "0.1.0"
+authors = ["Kamal Marhubi <kamal@marhubi.com>"]
+
+description = "Find the Rust nightly that introduced a bug"
+keywords = ["bisect", "rust"]
+
+homepage = "https://github.com/kamalmarhubi/rustc-bisect"
+repository = "https://github.com/kamalmarhubi/rustc-bisect.git"
+
+include = ["src/**/*", "Cargo.toml", "README.md"]
+readme = "README.md"
+
+publish = false
 
 [dependencies]
 chrono = "0.2"
