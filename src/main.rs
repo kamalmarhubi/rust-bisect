@@ -83,7 +83,6 @@ fn run_rust_bisect() -> Result<i32> {
                                .help("Arguments for COMMAND"))
                       .get_matches();
 
-
     let cfg = try!(multirust::Cfg::from_env(rust_install::notify::SharedNotifyHandler::none()));
 
     let good = matches.value_of("good").expect("clap didn't respect required arg `good`");
