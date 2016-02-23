@@ -115,7 +115,9 @@ rust$ git log --oneline 1805bba39..1727dee16 | grep f5fbefa
 f5fbefa remove csearch from resolve and typeck
 ```
 
-There it is! After using rust-bisect, we could have used `git bisect` to narrow
+There it is!
+
+After using rust-bisect, we could have used `git bisect` to narrow
 it down to the exact commit. In this case, that would be testing over just 30
 commits, which would require about 5 steps to bisect:
 
