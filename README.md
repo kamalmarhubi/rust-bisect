@@ -4,6 +4,7 @@ rust-bisect helps track down when a change—usually a bug!—was introduced int
 Rust. Rather than bisect directly on the Rust repository, it uses nightly
 builds to speed up the process.
 
+
 ## Usage
 
 ```
@@ -27,6 +28,7 @@ ARGS:
     ARGS...    Arguments for COMMAND
 
 ```
+
 
 ## Installation
 
@@ -64,6 +66,7 @@ Since rust-bisect uses multirust-rs, all nightlies that are installed to test
 against will be installed in your multirust root directory. At present they are
 not cleaned up, or in any way distinguished from toolchains you installed
 directly through multirust or multirust-rs.
+
 
 ## Example
 
