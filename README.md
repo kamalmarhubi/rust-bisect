@@ -31,13 +31,20 @@ rustc-bisect [--good=TOOLCHAIN] [--bad=TOOLCHAIN] COMMAND [ARGS...]
 
 ## Installation
 
-rustc-bisect uses the multirust-rs crate as a library, which curently requires
+rustc-bisect uses the multirust-rs crate as a library, which currently requires
 a nightly build to install. I suggest using multirust and cargo-install to
 install rustc-bisect:
 
 ```
 $ multirust run nightly cargo install rustc-bisect
 ```
+
+**NB** This takes a *really* long time the first time! There are a few changes
+I made in upstream multirust-rs that aren't in any release yet, so I use a git
+dependency. Unfortunately, there is a submodule that has all binaries, and
+Cargo will get the submodule and its entire history, which drastically slows
+down the initial build as it downloads almost 700 MB of binaries.
+
 
 ## How it works
 
