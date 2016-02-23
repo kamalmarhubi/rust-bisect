@@ -2,6 +2,7 @@
 name = "rustc-bisect"
 version = "0.1.0"
 authors = ["Kamal Marhubi <kamal@marhubi.com>"]
+license = "MIT"
 
 description = "Find the Rust nightly that introduced a bug"
 keywords = ["bisect", "rust"]
