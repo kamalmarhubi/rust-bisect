@@ -2,7 +2,7 @@ environment:
   global:
     # This will be used as part of the zipfile name
     PROJECT_NAME: rust-bisect
-    RUST_VERSION: 1.6.0
+    RUST_VERSION: nightly
   matrix:
     - TARGET: i686-pc-windows-msvc
     - TARGET: x86_64-pc-windows-msvc
