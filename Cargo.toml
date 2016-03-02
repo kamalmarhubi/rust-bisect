@@ -31,11 +31,9 @@ term = "0.4.4"
 # initial build as it downloads almost 700 MB of binaries.
 [dependencies.multirust-rs]
 git = "https://github.com/Diggsey/multirust-rs.git"
-branch = "new"
-rev = "c350ddb"
+rev = "c350ddb447b6bd7e431c1a8af796bb5b345b8e8d"
 
 [dependencies.rust-install]
 git = "https://github.com/Diggsey/multirust-rs.git"
-branch = "new"
-rev = "c350ddb"
+rev = "c350ddb447b6bd7e431c1a8af796bb5b345b8e8d"
 path = "rust-install"
