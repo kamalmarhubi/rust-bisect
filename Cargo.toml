@@ -17,7 +17,7 @@ publish = false
 
 [dependencies]
 chrono = "0.2"
-clap = "2"
+clap = "2.1.2"
 hyper = "0.7.2"
 libc = "0.2"
 semver = "0.2"
