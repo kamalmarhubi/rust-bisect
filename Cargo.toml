@@ -1,6 +1,6 @@
 [package]
 name = "rust-bisect"
-version = "0.1.0"
+version = "0.1.0-dev"
 authors = ["Kamal Marhubi <kamal@marhubi.com>"]
 license = "MIT"
 
