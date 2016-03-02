@@ -23,7 +23,7 @@ build: false
 # Equivalent to Travis' `script` phase
 test_script:
   - cargo build --verbose
-  - cargo run
+  - cargo run --example rust-issue-30123
   - cargo test
   - cargo build --release
 

@@ -7,7 +7,7 @@ set -ex
 # `before_deploy`/packaging phase
 
 cargo build --target $TARGET --verbose
-cargo run --target $TARGET
+cargo run --target $TARGET --example rust-issue-30123
 cargo test --target $TARGET
 
 cargo build --target $TARGET --release
