@@ -7,6 +7,10 @@ os:
 env:
   global:
   - PROJECT_NAME=rust-bisect
+addons:
+  apt:
+    packages:
+    - libssl-dev
 matrix:
   exclude:
   - os: linux
