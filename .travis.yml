@@ -1,0 +1,49 @@
+sudo: false
+language: rust
+rust: stable
+os:
+- linux
+- osx
+env:
+  global:
+  - PROJECT_NAME=rust-bisect
+matrix:
+  exclude:
+  - os: linux
+  - os: osx
+  include:
+  - os: linux
+    env: TARGET=i686-unknown-linux-gnu
+    addons:
+      apt:
+        packages:
+        - gcc-multilib
+  - os: linux
+    env: TARGET=x86_64-unknown-linux-gnu
+  - os: linux
+    env: TARGET=x86_64-unknown-linux-musl
+  - os: osx
+    env: TARGET=i686-apple-darwin
+  - os: osx
+    env: TARGET=x86_64-apple-darwin
+install:
+- sh ci/install.sh
+script:
+- sh ci/script.sh
+before_deploy:
+- sh ci/before_deploy.sh
+deploy:
+  provider: releases
+  api_key:
+    secure: g78bChYfKIk2kKji3KuKjOyxRDoEb2vQ44BuCzcEX8ueO96lhx4cyyHbgGjJDWKLom7oD/4MGwOzWkXZgpKSMNChXKJHDatpbU/QlwsWTrrqdueeoiXxrIqtVQDBbL3Uggq+0Klo3cLufzpS9zbrgp31lWWHa0LBaEp8hG+QZb5YKg7t7DLI3lGx9lMKY0CRxFNitfNwMNT2bI7kEns0WYgRVwRIegR8hTa8k6lBZpM/BMtqyQHXo9tUQDm9ViaAP2jUaXCXi6fW/nU6MCBC8o6H0/RNiq5Nn20ncebKarckIAM3ScxaluTcgSuzMakZNhC3XAp5IoLQCnr471vysZlRRU7xNXuKAVtQ5oj5BQfzdPiBzYjIFYD/8kct0DcTSgY7GqNSy2QHuwUaQMdp530OJLvsv8EIpgEXIHB6pSlGjsN0aJI0RyyjixEutneHWQenSS/vZ2f7PmrraUJiMaTTMldZ+Jgp3kGw9mebCztQfBX6zXUC2dtmSowEFpxQRjGZpArl+l5xFVl0lna77/WV36r+7Z5JsgGk87Fa/vhIuaXk0MBByv6fuMLBsgDPbEkQhoMPrjRc6sglE0FPl+C2rmF7Xm7nv9ebiZHKx6u76QXxQuXZ2d27vIECuTIEJePKxP2s/qAl2y/dRx48S0E+U43hJbveoVqb+WbjOKE=
+  file: "${PROJECT_NAME}-${TRAVIS_TAG}-${TARGET}.tar.gz"
+  skip_cleanup: true
+  on:
+    tags: true
+branches:
+  only:
+  - master
+  - "/^v\\d+\\.\\d+\\.\\d+.*$/"
+notifications:
+  email:
+    on_success: never
