@@ -37,9 +37,11 @@ ARGS:
 
 rust-bisect isn't on crates.io yet, as I need a few unreleased changes in
 [multirust-rs]. In the meantime, you can get binary releases for Linux and OS X
-on the [releases page][releases].
+on the [releases page][releases]. Automated builds for Windows aren't working
+yet; see [#7][issue-7].
 
 [releases]: https://github.com/kamalmarhubi/rust-bisect/releases
+[issue-7]: https://github.com/kamalmarhubi/rust-bisect/issues/7
 
 Note that as rust-bisect uses [multirust-rs] to handle finding, downloading,
 and installing the nightly builds, it requires an install of either
