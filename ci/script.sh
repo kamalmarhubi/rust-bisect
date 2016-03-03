@@ -49,5 +49,17 @@ cargo run --target $TARGET --example rust-issue-30123
 cargo test --target $TARGET
 cargo build --target $TARGET --release
 
-# sanity check the file type
-file target/$TARGET/release/rust-bisect
+binary=target/$TARGET/release/rust-bisect
+
+# Sanity check the file type.
+file $binary
+
+# Print dynamically linked library info.
+case $TRAVIS_OS_NAME in
+  osx)
+    otool -L $binary
+    ;;
+  linux)
+    ldd $binary
+    ;;
+esac
