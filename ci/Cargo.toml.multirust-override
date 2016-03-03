@@ -1,0 +1,36 @@
+[package]
+name = "rust-bisect"
+version = "0.1.0-dev"
+authors = ["Kamal Marhubi <kamal@marhubi.com>"]
+license = "MIT"
+
+description = "Find the Rust nightly that that changed some behavior"
+keywords = ["bisect", "rust"]
+
+homepage = "https://github.com/kamalmarhubi/rust-bisect"
+repository = "https://github.com/kamalmarhubi/rust-bisect.git"
+
+include = ["src/**/*", "Cargo.toml", "README.md"]
+readme = "README.md"
+
+publish = false
+
+[dependencies]
+chrono = "0.2"
+clap = "2.1.2"
+hyper = "0.7.2"
+libc = "0.2"
+semver = "0.2"
+term = "0.4.4"
+
+# Use git versions of multirust crates until the `new` branch is merged back
+# into `master` and there's a release. See
+#   https://github.com/Diggsey/multirust-rs/issues/54
+# Unfortunately, there is a submodule that has all binaries, and Cargo will get
+# the submodule and its entire history, which drastically slows down the
+# initial build as it downloads almost 700 MB of binaries.
+[dependencies.multirust-rs]
+path = "multirust-rs"
+
+[dependencies.rust-install]
+path = "multirust-rs/rust-install"
