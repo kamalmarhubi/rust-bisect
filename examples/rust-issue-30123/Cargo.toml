@@ -4,4 +4,4 @@ version = "0.1.0"
 authors = ["Kamal Marhubi <kamal@marhubi.com>"]
 
 [dependencies]
-aux = { path = "aux" }
+aux = { path = "aux-crate" }
