@@ -22,6 +22,13 @@ build: false
 
 # Equivalent to Travis' `script` phase
 test_script:
+  - echo Cloning multirust
+  - git clone --single-branch --branch new https://github.com/Diggsey/multirust-rs.git
+  - cd multirust-rs
+  - git checkout c350ddb447b6bd7e431c1a8af796bb5b345b8e8d
+  - cd ..
+  - echo Replacing Cargo.toml to override multirust path
+  - copy ci/Cargo.toml.multirust-override Cargo.toml
   - cargo build --verbose
   - cargo run --example rust-issue-30123
   - cargo test
