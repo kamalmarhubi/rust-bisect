@@ -7,10 +7,6 @@ os:
 env:
   global:
   - PROJECT_NAME=rust-bisect
-addons:
-  apt:
-    packages:
-    - libssl-dev
 matrix:
   exclude:
   - os: linux
@@ -22,9 +18,13 @@ matrix:
       apt:
         packages:
         - gcc-multilib
-        - libssl-dev
+        - libssl-dev:i386
   - os: linux
     env: TARGET=x86_64-unknown-linux-gnu
+    addons:
+      apt:
+        packages:
+        - libssl-dev
   - os: osx
     env: TARGET=i686-apple-darwin
   - os: osx
