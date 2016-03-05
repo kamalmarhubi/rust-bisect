@@ -6,8 +6,8 @@ dependencies = [
  "clap 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.7 (registry+https://github.com/rust-lang/crates.io-index)",
- "multirust-rs 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git?rev=c350ddb447b6bd7e431c1a8af796bb5b345b8e8d)",
- "rust-install 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git?rev=c350ddb447b6bd7e431c1a8af796bb5b345b8e8d)",
+ "multirust-rs 0.0.4",
+ "rust-install 0.0.4",
  "semver 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "term 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -247,7 +247,6 @@ dependencies = [
 [[package]]
 name = "multirust-rs"
 version = "0.0.4"
-source = "git+https://github.com/Diggsey/multirust-rs.git?rev=c350ddb447b6bd7e431c1a8af796bb5b345b8e8d#c350ddb447b6bd7e431c1a8af796bb5b345b8e8d"
 dependencies = [
  "clap 1.5.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -255,7 +254,7 @@ dependencies = [
  "openssl 0.7.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.1.55 (registry+https://github.com/rust-lang/crates.io-index)",
- "rust-install 0.0.4 (git+https://github.com/Diggsey/multirust-rs.git?rev=c350ddb447b6bd7e431c1a8af796bb5b345b8e8d)",
+ "rust-install 0.0.4",
  "term 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "user32-sys 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -364,7 +363,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "rust-install"
 version = "0.0.4"
-source = "git+https://github.com/Diggsey/multirust-rs.git?rev=c350ddb447b6bd7e431c1a8af796bb5b345b8e8d#c350ddb447b6bd7e431c1a8af796bb5b345b8e8d"
 dependencies = [
  "flate2 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -373,7 +371,7 @@ dependencies = [
  "openssl 0.7.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.1.55 (registry+https://github.com/rust-lang/crates.io-index)",
- "rust-manifest 0.0.1 (git+https://github.com/Diggsey/multirust-rs.git?rev=c350ddb447b6bd7e431c1a8af796bb5b345b8e8d)",
+ "rust-manifest 0.0.1",
  "shell32-sys 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "tar 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "tempdir 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -386,7 +384,6 @@ dependencies = [
 [[package]]
 name = "rust-manifest"
 version = "0.0.1"
-source = "git+https://github.com/Diggsey/multirust-rs.git?rev=c350ddb447b6bd7e431c1a8af796bb5b345b8e8d#c350ddb447b6bd7e431c1a8af796bb5b345b8e8d"
 dependencies = [
  "toml 0.1.27 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

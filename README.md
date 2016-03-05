@@ -58,12 +58,6 @@ For now, rust-bisect requires a nightly Rust to build; see [#2][issue-2].
 With a nightly Rust, it should be as simple as `cargo build` or `cargo build
 --release`.
 
-**NB** Building takes a *really* long time the first time! I'm using a git
-dependency for multirust-rs.  Unfortunately, there is a submodule that has all
-binaries, and Cargo will get the submodule and its entire history, which
-drastically slows down the initial build as it downloads almost 700 MB of
-binaries.
-
 
 ## How it works
 
