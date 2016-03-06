@@ -1,0 +1,52 @@
+[package]
+
+name = "multirust-rs"
+version = "0.0.4"
+authors = [ "Diggory Blake <diggsey@googlemail.com>" ]
+description = "multirust in rust - manage multiple rust installations with ease"
+
+documentation = "http://diggsey.github.io/multirust-rs/multirust/index.html"
+homepage = "https://github.com/Diggsey/multirust-rs"
+repository = "https://github.com/Diggsey/multirust-rs"
+
+readme = "README.md"
+
+keywords = ["multirust", "install", "proxy"]
+
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+rust-install = { version = "0.0.4", path = "rust-install" }
+clap = "1.4.5"
+regex = "0.1.41"
+rand = "0.3.11"
+openssl = "0.7.2"
+hyper = "0.7.0"
+term = "0.2.11"
+itertools = "0.4.1"
+
+[target.x86_64-pc-windows-gnu.dependencies]
+winapi = "0.2.4"
+winreg = "0.3.2"
+user32-sys = "0.1.2"
+
+[target.x86_64-pc-windows-msvc.dependencies]
+winapi = "0.2.4"
+winreg = "0.3.2"
+user32-sys = "0.1.2"
+
+[target.i686-pc-windows-gnu.dependencies]
+winapi = "0.2.4"
+winreg = "0.3.2"
+user32-sys = "0.1.2"
+
+[target.i686-pc-windows-msvc.dependencies]
+winapi = "0.2.4"
+winreg = "0.3.2"
+user32-sys = "0.1.2"
+
+[lib]
+name = "multirust"
+
+[[bin]]
+name = "multirust-rs"
