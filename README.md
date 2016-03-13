@@ -43,13 +43,6 @@ yet; see [#7][issue-7].
 [releases]: https://github.com/kamalmarhubi/rust-bisect/releases
 [issue-7]: https://github.com/kamalmarhubi/rust-bisect/issues/7
 
-Note that as rust-bisect uses [multirust-rs] to handle finding, downloading,
-and installing the nightly builds, it requires an install of either
-[multirust-rs] or [multirust].
-
-[multirust]: https://github.com/brson/multirust
-[multirust-rs]: https://github.com/Diggsey/multirust-rs/
-
 
 ## Building
 
