@@ -26,5 +26,5 @@ term = "0.4.4"
 # These were added with `git subtree` from commit c350ddb in multirust-rs.
 # TODO: replace with released versions from crates.io once there's a new
 # multirust release.
-multirust-rs = { path = "third_party/multirust-rs" }
-rust-install = { path = "third_party/multirust-rs/rust-install" }
+multirust-rs = { version = "0.0.4", path = "third_party/multirust-rs" }
+rust-install = { version = "0.0.4", path = "third_party/multirust-rs/rust-install" }
